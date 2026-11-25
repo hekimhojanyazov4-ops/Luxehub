@@ -1,0 +1,31 @@
+# ====== FRONTEND ======
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/package-lock.json
+frontend/npm-debug.log*
+
+# ====== BACKEND ======
+backend/venv/
+backend/.venv/
+backend/env/
+backend/.env
+backend/db.sqlite3
+backend/staticfiles/
+backend/media/
+
+# Python bytecode (any depth)
+**/__pycache__/
+*.pyc
+*.pyo
+
+# ====== EDITORS / OS ======
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ====== MISC ======
+*.log
+.env
