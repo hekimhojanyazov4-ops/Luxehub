@@ -1,232 +1,203 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
+
 from .models import (
-    PHONE_REGEX, PHONE_MESSAGE, User, Room, Reservation, Payment, Favourite, Review, NewsLetterSubscriber, RoomImage
+    Favourite,
+    NewsLetterSubscriber,
+    Payment,
+    Reservation,
+    Review,
+    Room,
+    RoomImage,
 )
 
-
-from django.contrib.auth.password_validation import (
-    validate_password as run_password_validators
-)
-from django.core.exceptions import ValidationError as DjangoValidationError
-from django.db import transaction
-from django.db.models import Avg
-from rest_framework.validators import UniqueValidator
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+User = get_user_model()
 
 
-class UserSummarySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = (
-            'id',
-            'username',
-            'first_name',
-            'last_name'
-        )
-
+# ---------------------------------------------------------------------
+# User
+# ---------------------------------------------------------------------
 
 class UserSerializer(serializers.ModelSerializer):
-    password_confirm = serializers.CharField(
-        write_only = True,
-        required = True,
-        style = {'input_type': 'password'}
-    )
     class Meta:
         model = User
-        fields = (
-            'id',
-            'created_at', 
-            'updated_at',
-            'is_staff',
-            'is_superuser',
-            'password',
-            'password_confirm',
-            'role',
-            'email',
-            'first_name',
-            'last_name',
-            'phone',
-            'is_email_verified',
-        )
-        extra_kwargs = {
-            'password': {
-                'write_only': True,
-                'required': False,
-                'style': {'input_type': 'password'},
-            },
-            'is_staff': {'read_only': True},
-            'is_superuser': {'read_only': True},
-            'is_email_verified': {'read_only': True},
-            'email': {'validators': []}
-        }
-        read_only_fields = fields
-
-        def validate_email(self, value):
-            value = value.strip().lower()
-            duplicates = User.objects.filter(email__iexact=value)
-            if self.instance is not None:
-                duplicates = duplicates.exclude(pk=self.instance.pk)
-            if duplicates.exists():
-                raise serializers.ValidationError('A user with this email already exists.')
-            return value
-
-        def validate_password(self, value):
-            run_password_validators(value, user = self.instance)
-            return value
-
-        def validate_role(self, value):
-            request = self.context.get('request')
-            if (
-                self.instance is not None
-                and request is not None
-                and request.user.is_authenticated
-                and not request.user.is_admin_role
-                and value != self.instance.role
-            ):
-                raise serializers.ValidationError(
-                    "Only administrators can change account roles."
-                )
-            return value
+        fields = [
+            "id", "username", "email", "first_name", "last_name",
+            "phone", "role", "is_email_verified", "date_joined",
+        ]
+        read_only_fields = ["id", "role", "is_email_verified", "date_joined"]
 
 
-        def validate(self, attrs):
-            if self.instance is None and not attrs.get('password'):
-                raise serializers.ValidationError({
-                    'password': "Password is required."
-                })
-            return attrs
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8)
 
-        def create(self, validated_data):
-            password = validated_data.pop('password')
-            request = self.context.get('request')
-            is_admin_request = bool(
-                request and request.user.is_authenticated and request.user.is_admin_role
-            )
+    class Meta:
+        model = User
+        fields = ["id", "username", "email", "password", "first_name", "last_name", "phone"]
+        read_only_fields = ["id"]
 
-        
-            if not is_admin_request:
-                validated_data['role'] = User.Role.CUSTOMER
-
-            user = User(**validated_data) 
-            user.save()
-            return user
-
-    def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
-        email_changed = (
-            'email' in validated_data and validated_data['email'] != instance.email
-        )
-        role_changed = (
-            'role' in validated_data and validated_data['role'] != instance.role
-        )
-
-        for field, value in validated_data.items():
-            setattr(instance, field, value)
-
-        if password:
-            instance.set_password(password)
-        if email_changed:
-            instance.is_email_verified = False
-        instance.save()  
-        return instance
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
 
 
-class RoomSerializer(serializers.ModelSerializer):  
-    class RoomImageSerializer(serializers.ModelSerializer):
-        room_id = serializers.UUIDField(source = 'room.id', read_only = True)
-        class Meta:
-            model = RoomImage
-            fields = (
-                'room_id',
-                'image',
-                'is_primary',
-                'created_at',
-                'updated_at',
-                'id'
-            )
-            read_only_fields = fields
-    images = RoomImageSerializer(many = True, read_only = True)
+# ---------------------------------------------------------------------
+# Room
+# ---------------------------------------------------------------------
+
+class RoomImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RoomImage
+        fields = ["id", "room", "image", "is_primary"]
+        read_only_fields = ["id"]
+
+
+class RoomSerializer(serializers.ModelSerializer):
+    images = RoomImageSerializer(many=True, read_only=True)
+    average_rating = serializers.SerializerMethodField()
+
     class Meta:
         model = Room
-        fields = (
-            'room_type',
-            'description',
-            'number',
-            'price_per_night',
-            'capacity',
-            'is_active',
-        )
+        fields = [
+            "id", "room_type", "number", "description",
+            "price_per_night", "discount_price_per_night", "capacity",
+            "is_active", "images", "average_rating", "created_at", "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+    def get_average_rating(self, obj):
+        reviews = list(obj.reviews.all())
+        if not reviews:
+            return None
+        return round(sum(r.stars for r in reviews) / len(reviews), 1)
 
     def validate(self, attrs):
-        instance = self.instance
-        price = attrs.get('price', getattr(instance, 'price', None))
-        discount = attrs.get('discount_price', getattr(instance, 'discount_price', None))
-        if price is not None and discount is not None and discount > price:
-            raise serializers.ValidationError({
-                'discount_price': 'Discount price cannot be greater than the price.'
-            })
+        price = attrs.get("price_per_night", getattr(self.instance, "price_per_night", None))
+        discount = attrs.get(
+            "discount_price_per_night", getattr(self.instance, "discount_price_per_night", None)
+        )
+        if discount is not None and price is not None and discount >= price:
+            raise serializers.ValidationError(
+                {"discount_price_per_night": "Arzanladylan baha adaty bahadan pes bolmaly."}
+            )
         return attrs
 
 
+class RoomAvailabilitySerializer(serializers.Serializer):
+    check_in = serializers.DateField()
+    check_out = serializers.DateField()
 
-class FavouriteSerializer(serializers.ModelSerializer):
-    user = UserSummarySerializer(read_only = True)
-    room = RoomSerializer(read_only = True)
-    class Meta:
-        model = Favourite
-        fields = (
-            'id',
-            'created_at',
-            'updated_at',
-            'room',
-            'user',
-        )
+    def validate(self, attrs):
+        if attrs["check_out"] <= attrs["check_in"]:
+            raise serializers.ValidationError("check_out hökman check_in-dan soň bolmaly.")
+        return attrs
+
+
+# ---------------------------------------------------------------------
+# Reservation
+# ---------------------------------------------------------------------
 
 class ReservationSerializer(serializers.ModelSerializer):
-    user = UserSummarySerializer(read_only = True)
-    room = RoomSerializer(read_only = True)
-    total_price = serializers.SerializerMethodField()
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    room_detail = RoomSerializer(source="room", read_only=True)
+    nights = serializers.ReadOnlyField()
+
     class Meta:
         model = Reservation
-        fields = (
-            'id',
-            'created_at',
-            'updated_at',
-            'user',
-            'room',
-            'check_in',
-            'check_out',
-            'guests_count',
-            'total_price',
-            'status',
-        )
+        fields = [
+            "id", "user", "room", "room_detail", "check_in", "check_out",
+            "guests_count", "nights", "total_price", "status", "created_at",
+        ]
+        read_only_fields = ["id", "user", "total_price", "status", "created_at"]
+
+    def validate(self, attrs):
+        check_in = attrs.get("check_in", getattr(self.instance, "check_in", None))
+        check_out = attrs.get("check_out", getattr(self.instance, "check_out", None))
+        room = attrs.get("room", getattr(self.instance, "room", None))
+        guests_count = attrs.get("guests_count", getattr(self.instance, "guests_count", 1))
+
+        if check_in and check_out and check_out <= check_in:
+            raise serializers.ValidationError(
+                {"check_out": "Çykyş senesi hökman giriş senesinden soň bolmaly."}
+            )
+
+        if room and guests_count and guests_count > room.capacity:
+            raise serializers.ValidationError(
+                {"guests_count": f"Bu otag iň köp {room.capacity} myhman kabul edip bilýär."}
+            )
+
+        if room and check_in and check_out:
+            exclude_id = self.instance.pk if self.instance else None
+            if not room.is_available_for(check_in, check_out, exclude_reservation_id=exclude_id):
+                raise serializers.ValidationError("Bu otag saýlanan senelerde eýýäm bronlanan.")
+
+        return attrs
+
+    def create(self, validated_data):
+        validated_data["user"] = self.context["request"].user
+        return super().create(validated_data)
+
+
+class ReservationStatusUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        fields = ["status"]
+
+
+# ---------------------------------------------------------------------
+# Payment
+# ---------------------------------------------------------------------
 
 class PaymentSerializer(serializers.ModelSerializer):
-    reservation = ReservationSerializer(read_only = True)
     class Meta:
         model = Payment
-        fields = (
-            'id',
-            'created_at',
-            'updated_at',
-            'reservation',
-            'amount',
-            'method',
-            'status',
-            'transaction_id',
-            'paid_at',
-        )
+        fields = [
+            "id", "reservation", "amount", "method",
+            "status", "transaction_id", "paid_at", "created_at",
+        ]
+        read_only_fields = ["id", "created_at"]
 
+
+# ---------------------------------------------------------------------
+# Favourite
+# ---------------------------------------------------------------------
+
+class FavouriteSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    room_detail = RoomSerializer(source="room", read_only=True)
+
+    class Meta:
+        model = Favourite
+        fields = ["id", "user", "room", "room_detail", "created_at"]
+        read_only_fields = ["id", "user", "created_at"]
+
+    def create(self, validated_data):
+        validated_data["user"] = self.context["request"].user
+        return super().create(validated_data)
+
+
+# ---------------------------------------------------------------------
+# Review
+# ---------------------------------------------------------------------
 
 class ReviewSerializer(serializers.ModelSerializer):
-    user = UserSummarySerializer(read_only = True)
-    room = RoomSerializer(read_only = True)
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Review
-        fields = (
-            'comment',
-            'user'
-            'stars',
-        )
+        fields = ["id", "user", "room", "comment", "stars", "created_at"]
+        read_only_fields = ["id", "user", "created_at"]
 
-    
+    def create(self, validated_data):
+        validated_data["user"] = self.context["request"].user
+        return super().create(validated_data)
+
+
+# ---------------------------------------------------------------------
+# Newsletter
+# ---------------------------------------------------------------------
+
+class NewsLetterSubscriberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsLetterSubscriber
+        fields = ["id", "email", "is_active", "created_at"]
+        read_only_fields = ["id", "is_active", "created_at"]

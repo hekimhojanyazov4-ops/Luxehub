@@ -1,14 +1,32 @@
-from django.urls import path, include
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
-from rest_framework import routers
 from .views import (
-    UserViewSet
+    FavouriteViewSet,
+    MeView,
+    NewsLetterSubscriberViewSet,
+    PaymentViewSet,
+    RegisterView,
+    ReservationViewSet,
+    ReviewViewSet,
+    RoomImageViewSet,
+    RoomViewSet,
 )
 
-router  = routers.DefaultRouter()
-
-router.register(r'users', UserViewSet, basename = 'users')
+router = DefaultRouter()
+router.register("rooms", RoomViewSet, basename="room")
+router.register("room-images", RoomImageViewSet, basename="room-image")
+router.register("reservations", ReservationViewSet, basename="reservation")
+router.register("payments", PaymentViewSet, basename="payment")
+router.register("favourites", FavouriteViewSet, basename="favourite")
+router.register("reviews", ReviewViewSet, basename="review")
+router.register("newsletter", NewsLetterSubscriberViewSet, basename="newsletter")
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("auth/register/", RegisterView.as_view(), name="register"),
+    path("auth/me/", MeView.as_view(), name="me"),
+    # If you use djangorestframework-simplejwt for login tokens, add:
+    # path("auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    # path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("", include(router.urls)),
 ]

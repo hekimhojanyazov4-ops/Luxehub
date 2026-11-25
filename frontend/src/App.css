@@ -1,3 +1,7 @@
+/* ========================================
+   RESET & ROOT VARIABLES
+======================================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -11,13 +15,36 @@
     --transition-default: all 0.3s ease;
 }
 
-li { list-style: none; }
-a { text-decoration: none; color: white; }
-input:focus { outline: none;}
+li {
+    list-style: none;
+}
+a {
+    text-decoration: none;
+    color: white;
+}
+input:focus,
+select:focus {
+    outline: none;
+}
 
 .body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Oxygen,
+        Ubuntu,
+        Cantarell,
+        "Open Sans",
+        "Helvetica Neue",
+        sans-serif;
 }
+
+/* ========================================
+   HEADER / NAVBAR
+======================================== */
 
 .header {
     display: flex;
@@ -28,83 +55,12 @@ input:focus { outline: none;}
     top: 0;
     background: transparent;
     backdrop-filter: blur(16px);
-        z-index: 999;
+    z-index: 999;
 }
-/* 
-.main-header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 4%;
-    width: 100%;
-    border: 1px solid silver;
-}
-
-.search-form {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 500px;
-    border: 1px solid silver;
-    border-radius: 2px;   
-    transition: all 0.3s ease;
-}
-
-.search-input {
-    width: 100%;
-    height: 40px;
-    padding: 12px 6%;
-    font-size: clamp(1vw, 2px, 4px);
-    border-radius: 4px;
-    border: none;
-}
-
-.search-input:focus {
-    outline: none;
-}
-
-.search-btn {
-    height: 40px;
-    width: 40px;
-    border: none;
-    background: transparent;
-    color: gray;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
-
-.search-form:focus-within, .search-btn:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    justify-content: space-between;
-}
-
-.action-link {
-    color: rgb(84, 84, 84);
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    transition: all 0.3s ease;
-    font-size: 16px;
-    padding: 6px 7%;
-}
-
-.action-link:hover {
-    color: var(--secondary-color);
-    border: none;
-} */
 
 .navbar {
     background-color: var(--primary-color);
-    height: 50px;
+    min-height: 50px;
     width: 100%;
     display: flex;
     align-items: center;
@@ -120,6 +76,7 @@ input:focus { outline: none;}
     transition: var(--transition-default);
     color: silver;
     font-weight: 600;
+    flex-shrink: 0;
 }
 
 .navbar-brand:hover {
@@ -130,12 +87,12 @@ input:focus { outline: none;}
     color: goldenrod;
 }
 
-
 .nav-links {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 2em;
+    flex-wrap: wrap;
 }
 
 .nav-link {
@@ -150,7 +107,7 @@ input:focus { outline: none;}
 }
 
 .nav-link::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     opacity: 0;
@@ -158,23 +115,19 @@ input:focus { outline: none;}
     background-color: rgb(255, 255, 255);
     border-radius: inherit;
     z-index: -1;
-    transition: transform 0.25s ease, opacity 0.25s ease;
+    transition:
+        transform 0.25s ease,
+        opacity 0.25s ease;
 }
 
-/* Hover ýagdaýy — öňküsi ýaly */
-.nav-item:hover .nav-link::after {
+.nav-item:hover .nav-link::after,
+.nav-link.active::after {
     transform: translateY(0);
     opacity: 1;
 }
 
 .nav-item:hover .nav-link {
     color: black;
-}
-
-/* Active ýagdaýy indi şol bir ::after arkaly süýşüp girýär */
-.nav-link.active::after {
-    transform: translateY(0);
-    opacity: 1;
 }
 
 .nav-link.active {
@@ -191,6 +144,7 @@ input:focus { outline: none;}
     background-color: var(--secondary-color);
     transition: var(--transition-default);
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 .reservation-btn:hover {
@@ -198,7 +152,24 @@ input:focus { outline: none;}
     color: white;
     transform: scale(1.03);
 }
- 
+
+/* Hamburger toggle for mobile nav. Hidden on desktop; shown <= 900px.
+   Pair with a `.nav-open` class toggled on `.nav-links` from your NavBar
+   component's state to slide the menu in/out. */
+.nav-toggle {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* ========================================
+   HOME / HERO SECTION
+======================================== */
 
 .home {
     background-size: cover;
@@ -209,6 +180,7 @@ input:focus { outline: none;}
     background-position: center;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     color: white;
@@ -226,29 +198,16 @@ input:focus { outline: none;}
     padding: 10%;
 }
 
-.search-form {
-    background-color: white;
-    width: 400px;
-    height: 400px;
-    padding: 10px 14px;
-    backdrop-filter: blur(4px);
-    border-radius: 10px;
-    padding: 6%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-}
-
 .hero-title {
-    font-size: 70px;
-    
+    font-size: clamp(32px, 5vw, 70px);
+    line-height: 1.1;
 }
 
 .hero-desc {
     padding: 14px;
     margin: 5% 10px;
     line-height: 24px;
+    font-size: clamp(14px, 1.4vw, 16px);
 }
 
 .hero-btn {
@@ -272,68 +231,14 @@ input:focus { outline: none;}
     color: var(--primary-color);
 }
 
-
-.search-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-}
-
-.form-title {
-    color: var(--primary-color);
-    text-align: left;
-    float: left;
-}
-
-.check-dates {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1em;
-}
-
-.check-date {
-    width: 150px;
-    padding: 12px;
-    border: 1px solid silver;
-    border-radius: 4px;
-    height: 30px;
-    cursor: pointer;
-}
-
-.adults {
-    width: 100%;
-    padding: 12px;
-    border-radius: 4px;
-}
-
-.adults:focus {
-    outline: none;
-}
-
-.child-room {
-    display: flex;
-    gap: 1em;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.childs, .rooms {
-    border: 1px solid var(--primary-color);
-    border-radius: 4px;
-    padding: 12px;
-    width: 50%;
-}
-
-
-
-
-
+/* ========================================
+   SEARCH / BOOKING FORM
+======================================== */
 
 .search-form {
     background-color: white;
     width: 400px;
+    max-width: 100%;
     padding: 8% 6%;
     backdrop-filter: blur(4px);
     border-radius: 10px;
@@ -355,6 +260,7 @@ input:focus { outline: none;}
     align-items: center;
     justify-content: space-between;
     gap: 1em;
+    flex-wrap: wrap;
 }
 
 .date-field,
@@ -372,7 +278,7 @@ input:focus { outline: none;}
     font-weight: 600;
 }
 
-/* Ikon + input/select-i bir gapda saklaýan düzgün */
+/* Ikon + input/select-i bir gapda saklaýan sarç */
 .input-icon-group {
     display: flex;
     align-items: center;
@@ -414,6 +320,7 @@ input:focus { outline: none;}
     align-items: flex-start;
     justify-content: space-between;
     width: 100%;
+    flex-wrap: wrap;
 }
 
 .search-submit-btn {
@@ -433,4 +340,343 @@ input:focus { outline: none;}
 .search-submit-btn:hover {
     background-color: var(--primary-color);
     transform: translateY(-2px);
+    color: white;
+}
+
+/* ========================================
+   FOOTER
+   Uses the same tokens defined in :root:
+   --primary-color, --secondary-color,
+   --text-light, --transition-default
+======================================== */
+
+.site-footer {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    padding: 64px 9% 0;
+}
+
+.footer-top {
+    display: grid;
+    grid-template-columns: 1.2fr 2fr;
+    gap: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* ---------- Brand column ---------- */
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 380px;
+}
+
+.footer-logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: silver;
+}
+
+.footer-logo span {
+    color: goldenrod;
+}
+
+.footer-tagline {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(226, 226, 226, 0.75);
+}
+
+.footer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+    list-style: none;
+    padding: 0;
+}
+
+.footer-contact li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: rgba(226, 226, 226, 0.85);
+}
+
+.footer-contact svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--secondary-color);
+    font-size: 16px;
+}
+
+.footer-contact a {
+    color: rgba(226, 226, 226, 0.85);
+    transition: var(--transition-default);
+}
+
+.footer-contact a:hover {
+    color: var(--secondary-color);
+}
+
+/* ---------- Link columns ---------- */
+
+.footer-links {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.footer-column h3 {
+    margin-bottom: 18px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: white;
+}
+
+.footer-column ul {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column a {
+    position: relative;
+    font-size: 14px;
+    color: rgba(226, 226, 226, 0.75);
+    transition: var(--transition-default);
+}
+
+.footer-column a:hover {
+    color: var(--secondary-color);
+    padding-left: 4px;
+}
+
+/* ---------- Bottom bar ---------- */
+
+.footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 0;
+}
+
+.footer-copyright {
+    font-size: 13px;
+    color: rgba(226, 226, 226, 0.65);
+}
+
+.footer-socials {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+}
+
+.footer-socials a {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: var(--text-light);
+    transition: var(--transition-default);
+}
+
+.footer-socials a:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.footer-socials svg {
+    font-size: 15px;
+}
+
+/* ========================================
+   RESPONSIVE
+   Breakpoints: 1050px (tablet), 900px (nav
+   collapses), 700px (mobile), 480px (small
+   mobile) — matches the footer's existing
+   scale so the whole page breaks consistently.
+======================================== */
+
+@media (max-width: 1050px) {
+    .footer-top {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-links {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .hero-title {
+        font-size: clamp(28px, 6vw, 52px);
+    }
+
+    .right-section {
+        padding: 6%;
+    }
+
+    .search-form {
+        width: 360px;
+    }
+}
+
+@media (max-width: 900px) {
+    .navbar {
+        padding: 10px 5%;
+        gap: 1em;
+    }
+
+    .nav-toggle {
+        display: block;
+        order: 3;
+    }
+
+    /* Collapsed by default; toggle `.nav-open` from NavBar's state to reveal. */
+    .nav-links {
+        position: fixed;
+        top: 50px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        background-color: var(--primary-color);
+        transition: max-height 0.3s ease;
+    }
+
+    .nav-links.nav-open {
+        max-height: 420px;
+    }
+
+    .nav-item {
+        width: 100%;
+    }
+
+    .nav-link {
+        width: 100%;
+        height: auto;
+        padding: 14px 9%;
+        border-radius: 0;
+    }
+
+    .reservation-btn {
+        order: 2;
+        width: auto;
+        padding: 8px 16px;
+    }
+
+    .home {
+        flex-direction: column;
+        background-attachment: scroll;
+        min-height: auto;
+        padding: 48px 0;
+    }
+
+    .left-section,
+    .right-section {
+        width: 100%;
+        padding: 24px 8%;
+        text-align: center;
+    }
+
+    .right-section {
+        align-items: center;
+    }
+
+    .hero-desc {
+        margin: 5% auto;
+        max-width: 480px;
+    }
+
+    .hero-btn {
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 700px) {
+    .site-footer {
+        padding: 48px 6% 0;
+    }
+
+    .footer-links {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 32px 16px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .search-form {
+        width: 100%;
+        padding: 8% 7%;
+    }
+
+    .check-dates,
+    .child-room {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.8em;
+    }
+
+    .childs,
+    .rooms {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-links {
+        grid-template-columns: 1fr;
+    }
+
+    .navbar-brand {
+        font-size: 20px;
+    }
+
+    .hero-title {
+        font-size: clamp(26px, 8vw, 38px);
+    }
+
+    .hero-desc {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .form-title {
+        font-size: 18px;
+    }
+
+    .search-submit-btn {
+        height: 44px;
+    }
+}
+
+/* ========================================
+   REDUCED MOTION
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
 }
