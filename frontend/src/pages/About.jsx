@@ -2,6 +2,7 @@ import React from "react";
 import "../css/About.css";
 import image1 from "../assets/hotel/5.jpg";
 import image2 from "../assets/hotel/2.jpg";
+import { NavLink} from 'react-router-dom'
 
 const About = () => {
     return (
@@ -61,9 +62,9 @@ const About = () => {
                         </div>
                     </div>
 
-                    <a href="#rooms" className="about-cta">
+                    <NavLink to="/rooms" className="about-cta">
                         Discover Our Suites <span>→</span>
-                    </a>
+                    </NavLink>
                 </div>
             </div>
         </section>

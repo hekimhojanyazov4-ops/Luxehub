@@ -47,6 +47,7 @@
         z-index 0.3s;
 }
 
+
 /* Main tall background photo */
 .image1 {
     top: 0;
@@ -54,6 +55,7 @@
     width: 320px;
     height: 410px;
     z-index: 1;
+    border: 8px solid #faf8f5;
 }
 
 /* Overlapping foreground photo */
@@ -67,7 +69,11 @@
 }
 
 .about-images img:hover {
+    cursor: pointer;
     transform: translateY(-6px) scale(1.02);
+}
+.image1:hover {
+    z-index: 3;
 }
 
 /* ========================================

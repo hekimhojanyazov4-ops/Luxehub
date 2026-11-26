@@ -14,7 +14,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 
 
-SECRET_KEY = load_dotenv(".env", "SECRET_KEY")
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET KEY .env-de ýok!")
 
 DEBUG = True
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
@@ -191,10 +195,10 @@ SIMPLE_JWT = {
 }
 
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOWED_HOSTS = [
-    "127.0.0.1:5174",
-    "localhost:5173"
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5174",
+    "http://localhost:5173",
+    "http://localhost:5174",
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -202,9 +206,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 
-
-
-
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = 587
 
 SPECTACULAR_SETTINGS = {
     # ---------------------------------------------------------

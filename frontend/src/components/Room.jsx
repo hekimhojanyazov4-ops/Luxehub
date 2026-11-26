@@ -1,28 +1,46 @@
+// src/components/RoomCard.jsx
+import React from "react";
 
+export default function RoomCard({ room }) {
+  const price = Number(room.price_per_night ?? 0).toFixed(0);
+  const image = room.images?.[0]?.image || room.images?.[0]?.url || null;
+  const avgRating = room.average_rating ?? room.avg_rating ?? null;
 
-
-
-const Room = ({number, type, description, price_per_night, discount_price_per_night, capacity}) => {
   return (
-    <article className='room-card'>
-          <h1 className='room-title'>A {type} room</h1>
-          <div className="content">
-              <h4>Number: {number}</h4>
-              <p className='description'>
-                  {
-                      description
-                  }
-              </p>
-              <div className="price-box">
-                  {
-                      discount_price_per_night ? <h3 className='price'>{discount_price_per_night}</h3> :
-                        <h3 className="price">{price_per_night}</h3>
-                  }
-              </div>
-              <span className='capacity'>{capacity}</span>
-            </div>
+    <article style={styles.card}>
+      <div style={styles.imageWrap}>
+        {image ? (
+          <img
+            src={image}
+            alt={room.name || room.room_type}
+            style={styles.image}
+          />
+        ) : (
+          <div style={styles.imagePlaceholder}>
+            {room.room_type?.toUpperCase() || "ROOM"}
+          </div>
+        )}
+        {!room.is_active && <span style={styles.badge}>INACTIVE</span>}
+      </div>
+      <div style={styles.body}>
+        <h3 style={styles.title}>
+          {room.name || `${room.room_type} #${room.room_number}`}
+        </h3>
+        <p style={styles.meta}>
+          {room.capacity} guests · {room.room_type}
+        </p>
+        {avgRating != null && (
+          <p style={styles.rating}>★ {Number(avgRating).toFixed(1)}</p>
+        )}
+        <div style={styles.footer}>
+          <span style={styles.price}>
+            ${price}
+            <small>/night</small>
+          </span>
+        </div>
+      </div>
     </article>
-  )
+  );
 }
 
-export default Room
+const styles = {/* neon/simple */};
