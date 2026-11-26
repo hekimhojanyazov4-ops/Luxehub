@@ -4,6 +4,10 @@ import heroBg from "../assets/hotel/heroBg.jpg";
 import '../css/Home.css'
 
 
+import image1 from "../assets/hotel/5.jpg";
+import image2 from "../assets/hotel/2.jpg";
+
+
 const Home = () => {
     const [adults, setAdults] = useState(1);
     const [children, setChildren] = useState(0);
