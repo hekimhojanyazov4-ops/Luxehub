@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+
+    # "drf_spectacular_sidecar",
     
     'api',
 ]
@@ -131,13 +133,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'api.User'
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
-    
+     "DEFAULT_PAGINATION_CLASS": (
+        "rest_framework.pagination.PageNumberPagination"
+    ),
+
+    "PAGE_SIZE": 12,
+
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
+
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SIMPLE_JWT = {
@@ -186,3 +201,170 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
+
+
+
+
+
+SPECTACULAR_SETTINGS = {
+    # ---------------------------------------------------------
+    # API INFORMATION
+    # ---------------------------------------------------------
+
+    "TITLE": "LuxeHub Hotel Management API",
+    "DESCRIPTION": """
+# LuxeHub — Hotel Management Platform
+
+Welcome to the official LuxeHub REST API documentation.
+
+A comprehensive hotel reservation and management platform
+built with Django REST Framework.
+
+## Core Features
+
+- JWT authentication and user management
+- Hotel room management
+- Room images and galleries
+- Room availability checking
+- Reservation management
+- Reservation cancellation
+- Reservation status management
+- Payment management
+- Customer reviews and ratings
+- Favourite rooms
+- Newsletter subscriptions
+
+## User Roles
+
+- ADMIN: Full platform administration.
+- MANAGER: Hotel and reservation management.
+- CUSTOMER: Room browsing and personal reservations.
+
+## Authentication
+
+Most protected endpoints require JWT authentication.
+
+1. Register or log in.
+2. Obtain your access token.
+3. Click Authorize in Swagger UI.
+4. Enter your JWT access token.
+
+Enjoy exploring the LuxeHub API!
+""",
+
+    "VERSION": "1.0.0",
+
+    "SERVE_INCLUDE_SCHEMA": False,
+
+    # ---------------------------------------------------------
+    # API ORGANIZATION
+    # ---------------------------------------------------------
+
+    "TAGS": [
+        {
+            "name": "Authentication",
+            "description": "Registration, login and user profiles.",
+        },
+        {
+            "name": "Rooms",
+            "description": "Browse, create, update and manage hotel rooms.",
+        },
+        {
+            "name": "Room Images",
+            "description": "Manage room images and galleries.",
+        },
+        {
+            "name": "Reservations",
+            "description": "Create, view, cancel and manage reservations.",
+        },
+        {
+            "name": "Payments",
+            "description": "Payment records and transaction management.",
+        },
+        {
+            "name": "Favourites",
+            "description": "Manage your favourite hotel rooms.",
+        },
+        {
+            "name": "Reviews",
+            "description": "Customer reviews and room ratings.",
+        },
+        {
+            "name": "Newsletter",
+            "description": "Newsletter subscriptions and management.",
+        },
+    ],
+
+    # ---------------------------------------------------------
+    # AUTHENTICATION
+    # ---------------------------------------------------------
+
+    "COMPONENTS": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Enter your JWT access token.",
+            },
+        },
+    },
+
+    "SECURITY": [
+        {"BearerAuth": []},
+    ],
+
+    # ---------------------------------------------------------
+    # SCHEMA GENERATION
+    # ---------------------------------------------------------
+
+    "SCHEMA_PATH_PREFIX": r"/api/",
+
+    "SCHEMA_PATH_PREFIX_TRIM": False,
+
+    "SORT_OPERATIONS": True,
+
+    "SORT_OPERATION_PARAMETERS": True,
+
+    "CAMELIZE_NAMES": False,
+
+    "ENUM_GENERATE_CHOICE_DESCRIPTION": True,
+
+    "COMPONENT_SPLIT_REQUEST": True,
+
+    "COMPONENT_NO_READ_ONLY_REQUIRED": True,
+
+    "DISABLE_ERRORS_AND_WARNINGS": False,
+
+    # ---------------------------------------------------------
+    # SWAGGER UI
+    # ---------------------------------------------------------
+
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "displayOperationId": False,
+        "defaultModelsExpandDepth": 2,
+        "defaultModelExpandDepth": 2,
+        "displayRequestDuration": True,
+        "filter": True,
+        "persistAuthorization": True,
+        "docExpansion": "list",
+        "tryItOutEnabled": True,
+    },
+
+    "REDOC_DIST": "SIDECAR",
+    "SWAGGER_UI_DIST": "SIDECAR",
+
+    # ---------------------------------------------------------
+    # EXAMPLES
+    # ---------------------------------------------------------
+
+    "APPEND_COMPONENTS": {},
+
+    "EXTENSIONS_INFO": {
+        "x-logo": {
+            "url": "https://example.com/logo.png",
+            "altText": "LuxeHub Logo",
+        },
+    },
+}

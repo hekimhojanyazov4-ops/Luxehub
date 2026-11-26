@@ -25,8 +25,5 @@ router.register("newsletter", NewsLetterSubscriberViewSet, basename="newsletter"
 urlpatterns = [
     path("auth/register/", RegisterView.as_view(), name="register"),
     path("auth/me/", MeView.as_view(), name="me"),
-    # If you use djangorestframework-simplejwt for login tokens, add:
-    # path("auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    # path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("", include(router.urls)),
 ]

@@ -93,6 +93,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         return Response({"available": available})
 
 
+
 class RoomImageViewSet(viewsets.ModelViewSet):
     """ADMIN/MANAGER only. Supports ?room=<id> filter."""
 

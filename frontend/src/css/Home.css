@@ -1,0 +1,174 @@
+
+
+
+.home {
+    background-size: cover;
+    width: 100%;
+    min-height: 100vh;
+    background-repeat: no-repeat;
+    /* background-attachment: fixed; */
+    background-position: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.wrapper {
+    padding: 0;
+    margin: 0;
+}
+
+
+.left-section {
+    width: 50%;
+    padding: 10px 6%;
+}
+
+.right-section {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding: 10%;
+}
+
+.hero-title {
+    font-size: 70px;
+}
+
+.hero-desc {
+    padding: 14px;
+    margin: 5% 10px;
+    line-height: 24px;
+}
+
+.hero-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    width: 150px;
+    border: 1px solid rgba(255, 255, 255, 0.592);
+    background-color: transparent;
+    color: white;
+    border-radius: 4px;
+    transition: all 0.5s ease;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+}
+
+.hero-btn:hover {
+    background-color: white;
+    transform: translateY(-5px);
+    color: var(--primary-color);
+}
+
+/* ========================================
+   SEARCH / BOOKING FORM
+======================================== */
+
+.search-form {
+    background-color: white;
+    width: 400px;
+    padding: 8% 6%;
+    backdrop-filter: blur(4px);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1em;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+}
+
+.form-title {
+    color: var(--primary-color);
+    text-align: left;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.check-dates {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.date-field,
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.date-field label,
+.field-group label {
+    font-size: 13px;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Ikon + input/select-i bir gapda saklaýan sarç */
+.input-icon-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid silver;
+    border-radius: 6px;
+    padding: 0 10px;
+    transition: var(--transition-default);
+}
+
+.input-icon-group:focus-within {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(172, 124, 102, 0.15);
+}
+
+.field-icon {
+    flex-shrink: 0;
+    color: var(--secondary-color);
+    font-size: 16px;
+}
+
+.check-date,
+.adults,
+.childs,
+.rooms {
+    border: none;
+    outline: none;
+    width: 100%;
+    height: 42px;
+    padding: 0 4px;
+    font-size: 14px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.child-room {
+    display: flex;
+    gap: 1em;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.search-submit-btn {
+    margin-top: 6px;
+    height: 46px;
+    width: 100%;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--secondary-color);
+    color: var(--text-light);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: var(--transition-default);
+}
+
+.search-submit-btn:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-2px);
+    color:white;
+}
